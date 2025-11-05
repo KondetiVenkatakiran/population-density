@@ -16,7 +16,7 @@ public class PopulationQuery {
 
     public static void main(String[] args) {
         if (args.length < 4) {
-            System.err.println("Usage: java PopulationQuery <filename> <x> <y> <version>");
+            System.err.println("Usage: java PopulationQuery <filename> <gridColumns> <gridRows> <version>");
             System.exit(1);
         }
 
@@ -29,14 +29,16 @@ public class PopulationQuery {
             gridColumns = Integer.parseInt(args[1]);
             gridRows = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Grid size must be an integer");
+            System.err.println("Grid size must be an integer");
+            System.exit(1);
         }
 
-        if (gridColumns < 1 || gridRows < 1)
-            throw new IllegalArgumentException("Grid dimensions must be positive");
+        if (gridColumns < 1 || gridRows < 1) {
+            System.err.println("Grid dimensions must be positive");
+            System.exit(1);
+        }
 
         CensusData data = parse(filename);
-        TotalPopulation totalPopulation = null;
 
         switch (version) {
             case "-v1" -> {
@@ -65,7 +67,10 @@ public class PopulationQuery {
                 v5.buildGrid();
                 totalPopulation = v5;
             }
-            default -> throw new UnsupportedOperationException("Unsupported version: " + version);
+            default -> {
+                System.err.println("Unsupported version: " + version);
+                System.exit(1);
+            }
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -74,12 +79,11 @@ public class PopulationQuery {
         while (true) {
             System.out.println("Please give west, south, east, north coordinates of your rectangle:");
             String input = scanner.nextLine();
-            start = System.currentTimeMillis();
 
-            String[] parts = input.split(" ");
+            String[] parts = input.trim().split("\\s+");
             if (parts.length != 4) {
-                System.out.println("Invalid input format. Exiting.");
-                break;
+                System.out.println("Invalid input format. Please enter exactly 4 integers separated by spaces.");
+                continue; // continue loop instead of exit so user can retry
             }
 
             try {
@@ -88,25 +92,25 @@ public class PopulationQuery {
                 int east = Integer.parseInt(parts[2]);
                 int north = Integer.parseInt(parts[3]);
 
-                if (totalPopulation.isValidCoordinates(west, south, east, north)) {
-                    System.out.println("Invalid coordinates. Exiting.");
-                    break;
+                if (!totalPopulation.isValidCoordinates(west, south, east, north)) {
+                    System.out.println("Invalid coordinates. Please enter valid coordinates within grid bounds.");
+                    continue; // allow retry instead of exiting
                 }
 
+                start = System.currentTimeMillis();
                 result = totalPopulation.calculatePopulation(west, south, east, north);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Invalid input. Exiting.");
-                break;
-            }
+                end = System.currentTimeMillis();
 
-            end = System.currentTimeMillis();
-            System.out.println("population of rectangle: " + result[0]);
-            System.out.format("percent of total population: %.2f%n",
+                System.out.println("Population of rectangle: " + result[0]);
+                System.out.format("Percent of total population: %.2f%%%n", 
                     Math.round(10000.0 * result[0] / result[1]) / 100.0);
-            System.out.println("Time Elapsed: " + (end - start) + " ms");
+                System.out.println("Time elapsed: " + (end - start) + " ms");
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input: coordinates must be integers. Please try again.");
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error calculating population: " + e.getMessage());
+            }
         }
-
-        scanner.close();
     }
 
     public static CensusData parse(String filename) {

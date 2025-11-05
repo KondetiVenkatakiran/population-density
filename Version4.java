@@ -105,7 +105,7 @@ public class Version4 extends Version2 {
       if (xhigh - xlow < SEQUENTIAL_CUTOFF_JOIN && yhigh - ylow < SEQUENTIAL_CUTOFF_JOIN) {
         for (int i = ylow; i < yhigh; i++) {
           for (int j = xlow; j < xhigh; j++) {
-            resultGrid[i][j] += leftGrid[i][j] + rightGrid[i][j];
+            resultGrid[i][j] = leftGrid[i][j] + rightGrid[i][j];
           }
         }
       } else {
@@ -128,6 +128,8 @@ public class Version4 extends Version2 {
 
   // Method to calculate the population within a specified rectangle
   public int[] calculatePopulation(int west, int south, int east, int north) {
+    System.out.printf("calculatePopulation called with west=%d, south=%d, east=%d, north=%d%n", west, south, east, north);
+
     if (!isGridBuilt) // Build the grid if not built
       buildGrid();
 
@@ -148,10 +150,9 @@ public class Version4 extends Version2 {
 
   @Override
   public boolean isValidCoordinates(int west, int south, int east, int north) {
-    // Coordinates should be within grid bounds and west < east, south < north
-    if (west < 0 || south < 0 || east > gridColumns || north > gridRows)
+    if (west < 1 || south < 1 || east > gridColumns || north > gridRows)
       return false;
-    if (west >= east || south >= north)
+    if (west > east || south > north)
       return false;
     return true;
   }
