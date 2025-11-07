@@ -25,28 +25,30 @@ public class Version3 extends Version1 {
       columnIndex = (int) Math.floor((data.data[i].longitude - bounds[0]) / columnWidth);
       rowIndex = (int) Math.floor((data.data[i].latitude - bounds[1]) / rowHeight);
 
-      if (columnIndex == gridRows && rowIndex == gridColumns)
-        tempGrid[columnIndex - 1][rowIndex - 1] += data.data[i].population;
-      else if (columnIndex == gridColumns)
-        tempGrid[columnIndex - 1][rowIndex] += data.data[i].population;
-      else if (rowIndex == gridRows)
-        tempGrid[columnIndex][rowIndex - 1] += data.data[i].population;
-      else
-        tempGrid[columnIndex][rowIndex] += data.data[i].population;
+      // Clamp indices if they fall exactly on the boundary
+      if (columnIndex >= gridColumns) columnIndex = gridColumns - 1;
+      if (rowIndex >= gridRows) rowIndex = gridRows - 1;
+
+      tempGrid[columnIndex][rowIndex] += data.data[i].population;
     }
+
     finalizeGrid(tempGrid);
     return tempGrid;
   }
 
   // Step two of grid building: finalize the grid for quick population queries
   public static void finalizeGrid(int[][] grid) {
-    for (int i = 1; i < grid[0].length; i++)
-      grid[0][i] += grid[0][i - 1];
-    for (int j = 1; j < grid.length; j++)
-      grid[j][0] += grid[j - 1][0];
-    for (int k = 1; k < grid[0].length; k++) {
-      for (int l = 1; l < grid.length; l++)
-        grid[l][k] += grid[l - 1][k] + grid[l][k - 1] - grid[l - 1][k - 1];
+    // Prefix sums by rows
+    for (int i = 0; i < grid.length; i++) {
+      for (int j = 1; j < grid[0].length; j++) {
+        grid[i][j] += grid[i][j - 1];
+      }
+    }
+    // Prefix sums by columns
+    for (int j = 0; j < grid[0].length; j++) {
+      for (int i = 1; i < grid.length; i++) {
+        grid[i][j] += grid[i - 1][j];
+      }
     }
   }
 
@@ -54,27 +56,26 @@ public class Version3 extends Version1 {
   public int[] calculatePopulation(int west, int south, int east, int north) {
     if (!isGridBuilt)
       buildGrid();
-    if (isValidCoordinates(west, south, east, north))
+
+    if (!isValidCoordinates(west, south, east, north))
       throw new IllegalArgumentException("Invalid input coordinates");
 
     int[] populationResult = new int[2];
-    int topLeft, bottomRight, lowerLeft;
 
-    if (south - 2 < 0)
-      topLeft = 0;
-    else
-      topLeft = gridPopulationData[east - 1][south - 2];
-    if (west - 2 < 0)
-      bottomRight = 0;
-    else
-      bottomRight = gridPopulationData[west - 2][north - 1];
-    if (south - 2 < 0 || west - 2 < 0)
-      lowerLeft = 0;
-    else
-      lowerLeft = gridPopulationData[west - 2][south - 2];
+    // Calculate population using prefix sums
+    int totalPopulation = gridPopulationData[gridColumns - 1][gridRows - 1];
 
-    populationResult[0] = gridPopulationData[east - 1][north - 1] - topLeft - bottomRight + lowerLeft;
-    populationResult[1] = gridPopulationData[gridColumns - 1][gridRows - 1];
+    int populationInRect = gridPopulationData[east - 1][north - 1];
+    if (west > 1)
+      populationInRect -= gridPopulationData[west - 2][north - 1];
+    if (south > 1)
+      populationInRect -= gridPopulationData[east - 1][south - 2];
+    if (west > 1 && south > 1)
+      populationInRect += gridPopulationData[west - 2][south - 2];
+
+    populationResult[0] = populationInRect;
+    populationResult[1] = totalPopulation;
+
     return populationResult;
   }
 }

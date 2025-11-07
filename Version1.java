@@ -24,39 +24,34 @@ public class Version1 implements TotalPopulation {
             if (latitude < south) {
                 south = latitude; // Update south bound
             }
-
             if (latitude > north) {
                 north = latitude; // Update north bound
             }
-
             if (longitude < west) {
                 west = longitude; // Update west bound
             }
-
             if (longitude > east) {
                 east = longitude; // Update east bound
             }
-
         }
-        return new float[] { west, south, east, north }; // Return the calculated bounds
+        return new float[]{west, south, east, north}; // Return the calculated bounds
     }
 
-    // Method to check if the given coordinates are valid within the grid
+    // Corrected method to check if the given coordinates are valid within the grid
     public boolean isValidCoordinates(int west, int south, int east, int north) {
-        return (west <= 0 || south <= 0 || (east < west || east > gridColumns) || (north < south || north > gridRows));
+        return (west > 0 && south > 0 &&
+                east >= west && east <= gridColumns &&
+                north >= south && north <= gridRows);
     }
 
     // Method to check if a point (x, y) is inside the specified rectangle
     public boolean inside(float x, float y, int west, int south, int east, int north) {
-        return ((x >= west && x < east + 1 && y >= south && y < north + 1) ||
-                (x == east + 1 && x == gridColumns + 1 && y >= south && y < north + 1) ||
-                (y == north + 1 && y == gridRows + 1 && x >= west && x < east + 1) ||
-                (x == east + 1 && x == gridColumns + 1 && y == north + 1 && y == gridRows + 1));
+        return ((x >= west && x <= east) && (y >= south && y <= north));
     }
 
     // Method to calculate the population within a specified rectangle
     public int[] calculatePopulation(int west, int south, int east, int north) {
-        if (isValidCoordinates(west, south, east, north))
+        if (!isValidCoordinates(west, south, east, north))
             throw new IllegalArgumentException("Invalid input coordinates"); // Validate input coordinates
 
         int[] result = new int[2]; // Array to store the population count and total population
@@ -72,5 +67,28 @@ public class Version1 implements TotalPopulation {
             result[1] += data.data[i].population; // Add to the total population
         }
         return result; // Return the population count and total population
+    }
+
+    // ---------------------------------------------------------
+    // Added main() method for independent testing
+    // ---------------------------------------------------------
+    public static void main(String[] args) {
+        // Create some dummy data for testing
+        CensusData data = new CensusData();
+        data.add(1000, 40.0f, -90.0f);
+        data.add(2000, 35.0f, -100.0f);
+        data.add(1500, 45.0f, -95.0f);
+
+        int gridColumns = 10;
+        int gridRows = 10;
+
+        Version1 version1 = new Version1(data, gridColumns, gridRows);
+
+        // Example rectangle query
+        int west = 1, south = 1, east = 5, north = 5;
+        int[] result = version1.calculatePopulation(west, south, east, north);
+
+        System.out.println("Population in region: " + result[0]);
+        System.out.println("Total population: " + result[1]);
     }
 }

@@ -52,4 +52,24 @@ public class SequentialCutoffCorners extends RecursiveAction {
         forkJoinPool.invoke(task);
         return task.boundaries;
     }
+
+    public static void main(String[] args) {
+        CensusData censusData = new CensusData();
+
+        // Add some sample data points
+        censusData.add(1000, 40.7128f, -74.0060f);  // New York
+        censusData.add(500, 34.0522f, -118.2437f);  // Los Angeles
+        censusData.add(700, 41.8781f, -87.6298f);   // Chicago
+        censusData.add(300, 29.7604f, -95.3698f);   // Houston
+        censusData.add(900, 33.4484f, -112.0740f);  // Phoenix
+
+        int sequentialCutOff = 2;
+
+        float[] corners = findCornersWithSequentialCutOff(censusData, sequentialCutOff);
+
+        System.out.println("West boundary: " + corners[0]);
+        System.out.println("South boundary: " + corners[1]);
+        System.out.println("East boundary: " + corners[2]);
+        System.out.println("North boundary: " + corners[3]);
+    }
 }

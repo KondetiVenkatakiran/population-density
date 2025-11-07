@@ -77,13 +77,19 @@ public class PopulationQuery {
         int[] result = new int[2];
 
         while (true) {
-            System.out.println("Please give west, south, east, north coordinates of your rectangle:");
-            String input = scanner.nextLine();
+            System.out.println("Please give west, south, east, north coordinates of your rectangle (or type 'exit' to quit):");
+            String input = scanner.nextLine().trim();
 
-            String[] parts = input.trim().split("\\s+");
+            // Check if user wants to exit
+            if (input.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting program. Goodbye!");
+                break;
+            }
+
+            String[] parts = input.split("\\s+");
             if (parts.length != 4) {
                 System.out.println("Invalid input format. Please enter exactly 4 integers separated by spaces.");
-                continue; // continue loop instead of exit so user can retry
+                continue; // continue loop so user can retry
             }
 
             try {
@@ -102,8 +108,8 @@ public class PopulationQuery {
                 end = System.currentTimeMillis();
 
                 System.out.println("Population of rectangle: " + result[0]);
-                System.out.format("Percent of total population: %.2f%%%n", 
-                    Math.round(10000.0 * result[0] / result[1]) / 100.0);
+                System.out.format("Percent of total population: %.2f%%%n",
+                        Math.round(10000.0 * result[0] / result[1]) / 100.0);
                 System.out.println("Time elapsed: " + (end - start) + " ms");
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input: coordinates must be integers. Please try again.");
@@ -111,6 +117,8 @@ public class PopulationQuery {
                 System.out.println("Error calculating population: " + e.getMessage());
             }
         }
+
+        scanner.close();
     }
 
     public static CensusData parse(String filename) {

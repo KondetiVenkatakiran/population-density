@@ -17,14 +17,16 @@ public class Version2 implements TotalPopulation {
     this.bounds = calculateCorners(data); // Calculate the geographical bounds
   }
 
-  // Method to check if the given coordinates are valid within the grid
+  // Corrected method to check if the given coordinates are valid within the grid
   public boolean isValidCoordinates(int west, int south, int east, int north) {
-    return (west <= 0 || south <= 0 || (east < west || east > gridColumns) || (north < south || north > gridRows));
+    return (west > 0 && south > 0 &&
+            east >= west && east <= gridColumns &&
+            north >= south && north <= gridRows);
   }
 
   // Method to calculate the population within a specified rectangle
   public int[] calculatePopulation(int west, int south, int east, int north) {
-    if (isValidCoordinates(west, south, east, north))
+    if (!isValidCoordinates(west, south, east, north))
       throw new IllegalArgumentException("Invalid input coordinates"); // Validate input coordinates
 
     int[] coordinates = new int[] { west, south, east, north }; // Store the rectangle coordinates
@@ -99,10 +101,8 @@ public class Version2 implements TotalPopulation {
 
     // Method to check if a given point (longitudeIndex, latitudeIndex) is within the specified grid area.
     public boolean grid(float longitudeIndex, float latitudeIndex) {
-      return ((longitudeIndex >= coordinates[0] && longitudeIndex < coordinates[2] + 1 && latitudeIndex >= coordinates[1] && latitudeIndex < coordinates[3] + 1) ||
-              (longitudeIndex == coordinates[2] + 1 && longitudeIndex == gridColumns + 1 && latitudeIndex >= coordinates[1] && latitudeIndex < coordinates[3] + 1) ||
-              (latitudeIndex == coordinates[3] + 1 && latitudeIndex == gridRows + 1 && longitudeIndex >= coordinates[0] && longitudeIndex < coordinates[2] + 1) ||
-              (longitudeIndex == coordinates[2] + 1 && longitudeIndex == gridColumns + 1 && latitudeIndex == coordinates[3] + 1 && latitudeIndex == gridRows + 1));
+      return ((longitudeIndex >= coordinates[0] && longitudeIndex <= coordinates[2]) &&
+              (latitudeIndex >= coordinates[1] && latitudeIndex <= coordinates[3]));
     }
 
     // The compute method is where the parallel computation logic is implemented.
@@ -135,5 +135,28 @@ public class Version2 implements TotalPopulation {
         populationData[1] = leftTask.populationData[1] + rightTask.populationData[1];
       }
     }
+  }
+
+  // ----------------------------------------
+  // Added main() method for independent testing
+  // ----------------------------------------
+  public static void main(String[] args) {
+    // Create some dummy census data for testing
+    CensusData data = new CensusData();
+    data.add(1000, 40.0f, -90.0f);
+    data.add(2000, 35.0f, -100.0f);
+    data.add(1500, 45.0f, -95.0f);
+
+    int gridColumns = 10;
+    int gridRows = 10;
+
+    Version2 version2 = new Version2(data, gridColumns, gridRows);
+
+    // Example rectangle query
+    int west = 1, south = 1, east = 5, north = 5;
+    int[] result = version2.calculatePopulation(west, south, east, north);
+
+    System.out.println("Population in region: " + result[0]);
+    System.out.println("Total population: " + result[1]);
   }
 }
