@@ -6,7 +6,7 @@
    Specifically, it uses classes like CensusData.java, CensusGroup.java, MapPane.java, InteractionPane.java, ParallelGridBuild.java, etc. So you are using the Java Standard Library (collections, concurrency) plus your own classes for grid‐building and parallel execution.
 
 3. How long it took you and what was difficult:
-   It appears you worked through multiple versions (Version1 → Version5) of the program: your files include Version1.java through Version5.java. ￼
+   I have worked through multiple versions (Version1 → Version5) of the program: your files include Version1.java through Version5.java. ￼
    You likely spent several days finishing the project (for example 3 days in your prior write‑up example).
    The most difficult part was implementing the trick of building the grid in order to answer queries in constant time — in your code this is represented by classes like ParallelGridBuild.java, SequentialCutOffGridBuilding.java, etc. The parallel build and managing correct synchronization and cut‑off thresholds was challenging.
 
