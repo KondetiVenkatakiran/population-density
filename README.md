@@ -9,7 +9,7 @@ Our Group consists of two people:
 
 1. Venkata Kiran Kondeti
 Student ID: 811321722
-Email:
+Email: vkondeti@kent.edu
 
 2. Lakshmi Mattaparthi
 Student ID: 811313419
