@@ -1,0 +1,36 @@
+Parallel find corners with sequential cut-off = 2: 15.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 4: 1.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 8: 1.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 16: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 32: 1.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 64: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 128: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 256: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 512: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 1024: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 2048: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 4096: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 8192: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 16384: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 32768: 1.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 65536: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 131072: 0.0
+-173.033,0.31838202,-65.30086,1.8039697
+Parallel find corners with sequential cut-off = 220000: 1.0
+-173.033,0.31838202,-65.30086,1.8039697
